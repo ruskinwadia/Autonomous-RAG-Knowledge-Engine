@@ -55,14 +55,35 @@ flowchart TD
 
 ### Key Components
 
-| Component | Technology |
-|-----------|------------|
-| **LLM** | Groq (`llama-3.1-8b-instant`) |
-| **Embeddings** | Google Gemini (`gemini-embedding-001`) |
-| **Vector Store** | ChromaDB (Docker) |
-| **Agent Framework** | LangGraph with tool calling |
-| **Backend** | FastAPI with streaming SSE |
-| **Frontend** | Streamlit with custom CSS |
+| Component | Technology | Details |
+|-----------|------------|---------|
+| **LLM** | Groq | ⚡ `llama-3.1-8b-instant` (fast) or 🧠 `llama-3.3-70b-versatile` (accurate) |
+| **Embeddings** | Google Gemini | `gemini-embedding-001` with task-specific modes (RETRIEVAL_DOCUMENT / RETRIEVAL_QUERY) |
+| **Vector Store** | ChromaDB | Dockerized persistent storage |
+| **Keyword Search** | BM25 (rank_bm25) | Combined with vector via Reciprocal Rank Fusion |
+| **Agent Framework** | LangGraph | StateGraph with tool calling and conditional routing |
+| **Backend** | FastAPI | Streaming SSE responses, async endpoints |
+| **Frontend** | Streamlit | Custom CSS, dark theme, real-time updates |
+
+### Implemented Features
+
+| Category | Feature | Implementation |
+|----------|---------|----------------|
+| **Ingestion** | PDF Parsing | `pdfplumber` with text + table extraction |
+| **Ingestion** | Structured Tables | Column:value format (e.g., `Dry Storage: No \| Apron: Yes`) |
+| **Ingestion** | Header/Footer Removal | Frequency analysis removes lines appearing on >80% of pages |
+| **Ingestion** | Smart Chunking | 1000 chars with 100 overlap, page metadata preserved |
+| **Retrieval** | Hybrid Search | BM25 keyword + Gemini vector embeddings |
+| **Retrieval** | Reciprocal Rank Fusion | Merges results from both search methods |
+| **Retrieval** | Rate Limit Handling | Tenacity retry with exponential backoff |
+| **Agent** | Tool Calling | LangGraph with `retrieve_documents` tool |
+| **Agent** | Guardrails | Rejects off-topic questions, enforces document grounding |
+| **Agent** | Citations | Every answer includes `[DocumentName, Page X]` |
+| **Agent** | Follow-up Questions | 3 contextual suggestions after each answer |
+| **UI** | Model Selection | Choose between Fast (8B) and Smart (70B) |
+| **UI** | Starter Questions | Auto-generated from document content |
+| **UI** | Streaming | Token-by-token display via SSE |
+| **UI** | Thinking Process | Real-time visibility into agent reasoning |
 
 ---
 
