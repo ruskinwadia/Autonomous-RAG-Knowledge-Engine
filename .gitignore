@@ -6,3 +6,4 @@ __pycache__/
 venv/
 chroma_data/
 .DS_Store
+chroma_data/*
