@@ -2,7 +2,7 @@
 
 A document-based AI assistant built with **FastAPI**, **Streamlit**, **LangGraph**, and **ChromaDB**. Upload a PDF and chat with your document using advanced RAG (Retrieval-Augmented Generation).
 
-## 🎬 Demo
+## 🎬 Demo (YouTube)
 
 [![Demo Video](https://img.youtube.com/vi/wM9__MPE7PQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=wM9__MPE7PQ)
 
