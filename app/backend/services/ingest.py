@@ -25,23 +25,53 @@ class DocumentProcessor:
 
         with pdfplumber.open(file_path) as pdf:
             for i, page in enumerate(pdf.pages):
-                # 1. Extract Tables to Markdown
+                # 1. Extract Tables with structured column:value format
                 tables = page.extract_tables()
                 table_text = ""
                 if tables:
                     for table in tables:
-                        # Simple Markdown conversion: | Col1 | Col2 |
-                        # Filter None values
-                        clean_table = [
-                            [str(cell) if cell else "" for cell in row] for row in table
+                        # Check if table has a header row (first row with text)
+                        if len(table) < 2:
+                            continue
+
+                        # First row is assumed to be headers
+                        headers = [
+                            str(cell).strip() if cell else "" for cell in table[0]
                         ]
-                        table_text += (
-                            "\n"
-                            + "\n".join(
-                                ["| " + " | ".join(row) + " |" for row in clean_table]
+
+                        # Skip if no valid headers
+                        if not any(headers):
+                            # Fallback to simple markdown
+                            clean_table = [
+                                [str(cell) if cell else "" for cell in row]
+                                for row in table
+                            ]
+                            table_text += (
+                                "\n"
+                                + "\n".join(
+                                    [
+                                        "| " + " | ".join(row) + " |"
+                                        for row in clean_table
+                                    ]
+                                )
+                                + "\n"
                             )
-                            + "\n"
-                        )
+                            continue
+
+                        # Process each data row with column:value format
+                        for row in table[1:]:  # Skip header row
+                            cells = [str(cell).strip() if cell else "" for cell in row]
+                            if not any(cells):  # Skip empty rows
+                                continue
+
+                            # Build structured string: "Col1: Val1 | Col2: Val2 | ..."
+                            parts = []
+                            for header, cell in zip(headers, cells):
+                                if header and cell:
+                                    parts.append(f"{header}: {cell}")
+
+                            if parts:
+                                table_text += "\n" + " | ".join(parts) + "\n"
 
                 # 2. Extract Text
                 raw_text = page.extract_text() or ""

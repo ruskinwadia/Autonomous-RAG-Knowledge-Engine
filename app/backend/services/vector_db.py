@@ -12,7 +12,7 @@ import uuid
 import time
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_core.documents import Document
-from typing import List, Dict, Any
+from typing import List, Dict
 from tenacity import (
     retry,
     stop_after_attempt,

@@ -18,6 +18,7 @@ app = FastAPI()
 class ChatRequest(BaseModel):
     question: str
     chat_history: List[Dict[str, str]] = []
+    model_name: str = "llama-3.1-8b-instant"
 
 
 @app.post("/ingest")
@@ -102,9 +103,20 @@ async def get_document_info():
         }
 
 
+@app.delete("/clear-document")
+async def clear_document():
+    """Delete all documents from the collection."""
+    try:
+        v_mgr = VectorStoreManager()
+        v_mgr.client.delete_collection("pdf_rag_collection")
+        return {"status": "success", "message": "Document cleared"}
+    except Exception as e:
+        return {"status": "success", "message": "Collection already empty"}
+
+
 @app.post("/ask")
 async def ask_question(req: ChatRequest):
-    graph = create_graph()
+    graph = create_graph(model_name=req.model_name)
 
     # Reconstruct history
     messages = []

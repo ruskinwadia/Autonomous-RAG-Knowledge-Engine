@@ -126,10 +126,30 @@ def decide_next_node(state: AgentState) -> Literal["tools", "__end__"]:
 # ============================================================
 # GRAPH BUILDER
 # ============================================================
-def create_graph():
+def create_graph(model_name: str = "llama-3.1-8b-instant"):
+    """Create the agent graph with specified model."""
+
+    def agent_node_with_model(state: AgentState):
+        """Agent node that uses the specified model."""
+        messages = state["messages"]
+
+        # Prepend system prompt if not already present
+        if not messages or not isinstance(messages[0], SystemMessage):
+            messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
+
+        # Initialize LLM with selected model
+        llm = ChatGroq(model=model_name, temperature=0, streaming=True)
+
+        # Bind tools
+        tools = [retrieve_documents]
+        llm_with_tools = llm.bind_tools(tools)
+
+        response = llm_with_tools.invoke(messages)
+        return {"messages": [response]}
+
     workflow = StateGraph(AgentState)
 
-    workflow.add_node("agent", agent_node)
+    workflow.add_node("agent", agent_node_with_model)
     workflow.add_node("tools", ToolNode([retrieve_documents]))
 
     workflow.set_entry_point("agent")

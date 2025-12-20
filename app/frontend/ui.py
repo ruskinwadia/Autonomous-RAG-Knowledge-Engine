@@ -71,6 +71,11 @@ st.markdown(
         background: #1a1a2e;
         z-index: 1;
     }
+    
+    /* Add padding at bottom */
+    .main .block-container {
+        padding-bottom: 80px;
+    }
 </style>
 """,
     unsafe_allow_html=True,
@@ -90,6 +95,9 @@ if "file_uploaded" not in st.session_state:
 
 if "document_filename" not in st.session_state:
     st.session_state.document_filename = None
+
+if "selected_model" not in st.session_state:
+    st.session_state.selected_model = "llama-3.1-8b-instant"
 
 # ============================================================
 # CHECK FOR EXISTING DOCUMENT ON PAGE LOAD
@@ -148,11 +156,31 @@ with st.sidebar:
     if st.session_state.file_uploaded and st.session_state.document_filename:
         st.success(f"📄 **{st.session_state.document_filename}**")
         if st.button("🔄 Clear Document"):
+            # Delete from ChromaDB
+            try:
+                requests.delete(f"{BACKEND_URL}/clear-document")
+            except Exception:
+                pass
             st.session_state.file_uploaded = False
             st.session_state.messages = []
             st.session_state.starter_questions = []
             st.session_state.document_filename = None
             st.rerun()
+
+    # --- Model Selection ---
+    st.divider()
+    MODEL_OPTIONS = {
+        "⚡ Fast (8B)": "llama-3.1-8b-instant",
+        "🧠 Smart (70B)": "llama-3.3-70b-versatile",
+    }
+    st.session_state.selected_model = MODEL_OPTIONS[
+        st.selectbox(
+            "Select Model",
+            options=list(MODEL_OPTIONS.keys()),
+            index=0 if st.session_state.selected_model == "llama-3.1-8b-instant" else 1,
+        )
+    ]
+
 
 # ============================================================
 # MAIN CHAT INTERFACE
@@ -216,7 +244,7 @@ if st.session_state.starter_questions and not st.session_state.messages:
             st.session_state.messages.append({"role": "user", "content": question})
             st.rerun()
 
-# --- Handle User Input ---
+# --- User Input ---
 user_input = st.chat_input("Ask about your document...")
 
 if user_input:
@@ -246,6 +274,7 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "user"
                 json={
                     "question": st.session_state.messages[-1]["content"],
                     "chat_history": clean_history,
+                    "model_name": st.session_state.selected_model,
                 },
                 stream=True,
             ) as response:
