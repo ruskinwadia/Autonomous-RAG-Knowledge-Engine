@@ -29,20 +29,28 @@ A document-based AI assistant built with **FastAPI**, **Streamlit**, **LangGraph
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Streamlit UI  │────▶│  FastAPI Backend │────▶│    ChromaDB     │
-│   (Port 8501)   │     │   (Port 8000)    │     │   (Port 8001)   │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-        │                        │
-        │                        ▼
-        │               ┌─────────────────┐
-        │               │   LangGraph     │
-        │               │  Agent + Tools  │
-        │               └─────────────────┘
-        │                        │
-        ▼                        ▼
-   User Chat ◀────────── Streaming Response
+```mermaid
+flowchart TD
+    subgraph Frontend
+        UI["Streamlit UI<br>(Port 8501)"]
+    end
+    
+    subgraph Backend
+        API["FastAPI<br>(Port 8000)"]
+        Agent["LangGraph<br>Agent + Tools"]
+    end
+    
+    subgraph Storage
+        DB["ChromaDB<br>(Port 8001)"]
+    end
+    
+    UI -->|"User Query"| API
+    API --> Agent
+    Agent -->|"Hybrid Search"| DB
+    DB -->|"Relevant Chunks"| Agent
+    Agent -->|"Streaming Response"| API
+    API -->|"SSE Tokens"| UI
+
 ```
 
 ### Key Components
