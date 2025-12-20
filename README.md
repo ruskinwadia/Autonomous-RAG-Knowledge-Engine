@@ -4,7 +4,7 @@ A document-based AI assistant built with **FastAPI**, **Streamlit**, **LangGraph
 
 ## 🎬 Demo
 
-https://github.com/user-attachments/assets/demo.mp4
+[![Demo Video](https://img.youtube.com/vi/wM9__MPE7PQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=wM9__MPE7PQ)
 
 ---
 
