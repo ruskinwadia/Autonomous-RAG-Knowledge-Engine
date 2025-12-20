@@ -2,6 +2,10 @@
 
 A document-based AI assistant built with **FastAPI**, **Streamlit**, **LangGraph**, and **ChromaDB**. Upload a PDF and chat with your document using advanced RAG (Retrieval-Augmented Generation).
 
+## 🎬 Demo
+
+https://github.com/user-attachments/assets/demo.mp4
+
 ---
 
 ## 🚀 Features
@@ -186,9 +190,3 @@ Add a **LiteLLM** container to the Docker stack to unify all LLM providers behin
 - [ ] Math/calculation tool for complex table operations
 - [ ] Observability integration (LangSmith/Langfuse)
 - [ ] Chat history export (JSON/Markdown)
-
----
-
-## 📄 License
-
-MIT
