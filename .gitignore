@@ -7,3 +7,7 @@ venv/
 chroma_data/
 .DS_Store
 chroma_data/*
+tests/
+email.txt
+inspect_pdf.py
+*.pdf
