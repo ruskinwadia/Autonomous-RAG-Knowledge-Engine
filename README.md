@@ -1,4 +1,4 @@
-# 🤖 PDF AI Assistant
+# Autonomous RAG Knowledge Engine
 
 A document-based AI assistant built with **FastAPI**, **Streamlit**, **LangGraph**, and **ChromaDB**. Upload a PDF and chat with your document using advanced RAG (Retrieval-Augmented Generation).
 
